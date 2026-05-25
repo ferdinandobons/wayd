@@ -63,7 +63,7 @@ limits:
   scroll_cache_ttl_sec: 300  # Refresh the scroll pool every 5 min
   edit_window_sec: 300     # Posts editable for 5 min after creation
 
-# Body marker — present in every WAYD post body so we can distinguish them
+# Body marker: present in every WAYD post body so we can distinguish them
 # from any other issues that exist in the repo, and so we can parse vibe back.
 # Format: <!-- wayd:v1 vibe=<slug> -->
 # Soft-deleted posts get: <!-- wayd:v1 deleted=true -->

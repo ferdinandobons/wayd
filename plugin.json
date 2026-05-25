@@ -1,7 +1,7 @@
 {
   "name": "wayd",
   "version": "0.1.0",
-  "description": "The coffee break for programmers using AI coding agents. A meme-y social feed built on top of GitHub Issues — post vibes, scroll a random feed, react with emojis, reply via comments. All from within Claude Code, Cursor, Copilot CLI, and other agent-skill-compatible tools.",
+  "description": "The coffee break for programmers using AI coding agents. A meme-y social feed built on top of GitHub Issues, post vibes, scroll a random feed, react with emojis, reply via comments. All from within Claude Code, Cursor, Copilot CLI, and other agent-skill-compatible tools.",
   "author": {
     "name": "Ferdinando Bonsegna",
     "url": "https://github.com/ferdinandobons"
@@ -28,7 +28,7 @@
     {
       "name": "wayd",
       "path": "wayd/",
-      "description": "WAYD — What Are You Doing? A coffee-break social feed for programmers."
+      "description": "WAYD, What Are You Doing? A coffee-break social feed for programmers."
     }
   ],
   "compatibility": {
@@ -38,7 +38,7 @@
     "system": [
       {
         "name": "gh",
-        "description": "GitHub CLI — used as the transparent backend. Must be installed and authenticated (run `gh auth login`).",
+        "description": "GitHub CLI: used as the transparent backend. Must be installed and authenticated (run `gh auth login`).",
         "install": {
           "macos": "brew install gh",
           "linux": "see https://cli.github.com",
@@ -47,7 +47,7 @@
       },
       {
         "name": "python3",
-        "description": "Python 3.8+ — used for the helper scripts that orchestrate gh calls.",
+        "description": "Python 3.8+, used for the helper scripts that orchestrate gh calls.",
         "preinstalled_on": ["macos", "linux"]
       }
     ],

@@ -1,6 +1,6 @@
 """Shared helpers for WAYD: gh CLI wrappers, config loading, post parsing.
 
-All other scripts call into here — they never invoke `gh` directly. This means
+All other scripts call into here: they never invoke `gh` directly. This means
 swapping the backend (e.g. moving from Issues to Discussions one day) touches
 one file, not five.
 """
@@ -18,7 +18,7 @@ from pathlib import Path
 from typing import Any
 
 try:
-    import yaml  # PyYAML — usually available; falls back below if not
+    import yaml  # PyYAML: usually available; falls back below if not
 except ImportError:
     yaml = None
 
@@ -64,7 +64,7 @@ def _naive_yaml(text: str) -> dict[str, Any]:
     """Tiny YAML-ish parser for the config shape we actually use.
 
     Supports: top-level scalars, top-level lists of dicts, nested dicts.
-    Doesn't try to be general — if PyYAML is unavailable and someone hand-edits
+    Doesn't try to be general: if PyYAML is unavailable and someone hand-edits
     config.yml in a weird way, they get a clear error.
     """
     # Practically: tell the user to install PyYAML. The fallback is too risky
@@ -377,7 +377,7 @@ def emit_error(human_message: str, code: str = "error") -> None:
 
 
 # ---------------------------------------------------------------------------
-# Error translation — gh error → user-friendly sentence
+# Error translation: gh error → user-friendly sentence
 # ---------------------------------------------------------------------------
 
 
@@ -390,7 +390,7 @@ def translate_gh_error(e: "GhError", context: str = "default") -> str:
     """
     s = (e.stderr or "").lower()
 
-    # Not found — multiple shapes depending on REST vs GraphQL
+    # Not found: multiple shapes depending on REST vs GraphQL
     if (
         "404" in s
         or "not found" in s
@@ -403,7 +403,7 @@ def translate_gh_error(e: "GhError", context: str = "default") -> str:
 
     # Locked thread (commenting on a soft-deleted post)
     if "423" in s or "locked" in s:
-        return "This thread has been locked — probably because the post was deleted."
+        return "This thread has been locked: probably because the post was deleted."
 
     # Permissions / auth
     if "403" in s or "permission" in s or "forbidden" in s:
@@ -424,7 +424,7 @@ def translate_gh_error(e: "GhError", context: str = "default") -> str:
     ):
         return "Couldn't reach GitHub right now. Check your connection and try again."
 
-    # Generic catch-all — vary by context so the user gets a hint
+    # Generic catch-all: vary by context so the user gets a hint
     if context == "comment":
         return "Couldn't post your reply. Try again in a moment."
     if context == "react":

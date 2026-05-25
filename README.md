@@ -1,24 +1,23 @@
-# WAYD — *What Are You Doing?*
+<p align="center">
+  <img src="assets/hero.svg" alt="WAYD: What Are You Doing? The coffee break for programmers using AI coding agents." width="100%"/>
+</p>
+
+# WAYD: *What Are You Doing?*
 
 > **The coffee break for programmers using AI coding agents.**
 >
 > A meme-y, low-friction social feed that lives inside Claude Code, Cursor,
 > Copilot CLI, and any other tool that supports the agent-skill format.
-> Built on GitHub Issues, so there's no server, no database, no signup —
+> Built on GitHub Issues, so there's no server, no database, no signup,
 > just your existing GitHub account and a short command.
-
-```
-    🤡 cursed-code · 🪦 rip-me · 🫠 brain-melt · 🧙 dark-arts
-    🔥 hot-take · 💭 shower-thought · 🤔 existential · ☕ procrastinating
-```
 
 ---
 
 ## What is WAYD?
 
-WAYD is a skill that lets programmers share short status updates ("vibes") with strangers in the AI-coding-agents community — while compilations run, tests crawl, or `npm install` does its eternal thing. Open it with `/wayd`, post a 1000-character vibe under your real GitHub handle, scroll a random feed of other people's vibes, react with emojis, reply via comments, and get back to work.
+WAYD is a skill that lets programmers share short status updates ("vibes") with strangers in the AI-coding-agents community, while compilations run, tests crawl, or `npm install` does its eternal thing. Open it with `/wayd`, post a 1000-character vibe under your real GitHub handle, scroll a random feed of other people's vibes, react with emojis, reply via comments, and get back to work.
 
-Behind the scenes WAYD uses GitHub Issues for storage — but **you'll never see it**. No issue numbers, no JSON, no `gh` commands in your terminal. Just posts and people.
+Behind the scenes WAYD uses GitHub Issues for storage, but **you'll never see it**. No issue numbers, no JSON, no `gh` commands in your terminal. Just posts and people.
 
 ### Why does this exist?
 
@@ -69,7 +68,7 @@ That's the whole loop: post → scroll → react/reply → repeat.
 | 🫠 **brain-melt** | "my brain is leaking" | *"I've stared at 3 files for 10 minutes and I don't remember what language this is"* |
 | 🧙 **dark-arts** | "I solved it with evil" | *"Bug fixed with `setTimeout(fn, 100)`. Don't ask. Don't touch. It works."* |
 | 🔥 **hot-take** | "opinion that will start a war" | *"If you use spaces instead of tabs you are a terrible person and you should question yourself"* |
-| 💭 **shower-thought** | "random thought" | *"We don't create bugs. We reveal them. They already exist in the universe — we just interpret them."* |
+| 💭 **shower-thought** | "random thought" | *"We don't create bugs. We reveal them. They already exist in the universe: we just interpret them."* |
 | 🤔 **existential** | "is this the life I wanted?" | *"I pay my mortgage by moving JSON from one endpoint to another. Is this what my grandfather imagined for me?"* |
 | ☕ **procrastinating** | "I should be working" | *"14 tickets in backlog. Reading WAYD instead. Send help. No actually send another post."* |
 
@@ -132,7 +131,7 @@ claude plugin update wayd@wayd
 > claude plugin install wayd@wayd
 > ```
 
-**CLI / SkillKit:** re-run the install command — it overwrites the previous version.
+**CLI / SkillKit:** re-run the install command: it overwrites the previous version.
 
 **Git Submodule:**
 ```bash
@@ -158,7 +157,7 @@ Then you're in. No tokens, no signup, no email confirmations.
 
 ## Commands
 
-You can use slash commands or natural language — WAYD understands both.
+You can use slash commands or natural language, WAYD understands both.
 
 | What you want to do | Try saying |
 |--------------------|------------|
@@ -179,9 +178,9 @@ While scrolling, you can `n` (next), tap an emoji to react, `c: <text>` to comme
 
 ## Privacy & data
 
-- **Identity**: WAYD uses your real GitHub username. It's the same handle that appears on issues and comments — there's no separate WAYD account.
+- **Identity**: WAYD uses your real GitHub username. It's the same handle that appears on issues and comments: there's no separate WAYD account.
 - **Local state**: WAYD stores small files in `~/.claude/skills/wayd/data/` (your GitHub username, your block list, scroll history, last-check timestamps). Never committed, never sent anywhere.
-- **What's public**: every post and comment you make is a public GitHub issue/comment on this repo. Treat WAYD as a public square — assume your boss could read it.
+- **What's public**: every post and comment you make is a public GitHub issue/comment on this repo. Treat WAYD as a public square: assume your boss could read it.
 - **Deletion**: `/wayd delete` marks your post as `[deleted by author]` and locks the thread. The issue itself remains on GitHub (we can't truly delete it as a non-admin user) but it disappears from WAYD's scroll.
 
 ---
@@ -194,7 +193,7 @@ WAYD has a [Code of Conduct](CODE_OF_CONDUCT.md). The short version: no harassme
 
 ## Contributing
 
-WAYD is an experiment. If you have ideas for new vibes, UX improvements, or features that fit the "coffee break" spirit, open an issue with the `feature-request` label (not as a WAYD post — those have a different format). PRs welcome.
+WAYD is an experiment. If you have ideas for new vibes, UX improvements, or features that fit the "coffee break" spirit, open an issue with the `feature-request` label (not as a WAYD post, those have a different format). PRs welcome.
 
 What WAYD will probably **never** become: a real social network, a feed with karma/streaks/badges, anything with notifications that ping you while you're trying to focus. The whole point is that it lives inside your editor and stays small.
 
@@ -202,8 +201,8 @@ What WAYD will probably **never** become: a real social network, a feed with kar
 
 ## License
 
-[MIT](LICENSE). Use it, fork it, host your own instance pointed at your own repo — the `repo` key in `wayd/config.yml` is the only thing you need to change.
+[MIT](LICENSE). Use it, fork it, host your own instance pointed at your own repo, the `repo` key in `wayd/config.yml` is the only thing you need to change.
 
 ---
 
-*"What are you doing?" — every programmer to themselves, several times a day, at 2 AM, while staring at a stack trace.*
+*"What are you doing?": every programmer to themselves, several times a day, at 2 AM, while staring at a stack trace.*

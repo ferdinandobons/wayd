@@ -29,12 +29,12 @@ If the first line is ≤60 chars, no ellipsis. If longer, truncate to 57 chars +
 ## Body format
 
 ```
-<user's text — 1 to 1000 characters>
+<user's text, 1 to 1000 characters>
 
 <!-- wayd:v1 vibe=<slug> -->
 ```
 
-The blank line between text and marker is intentional — it keeps the GitHub UI rendering clean even though we never tell users to look at GitHub.
+The blank line between text and marker is intentional, it keeps the GitHub UI rendering clean even though we never tell users to look at GitHub.
 
 Examples:
 ```
@@ -45,7 +45,7 @@ Looking at a doStuff() method that's 800 lines long, written by me 6 months ago.
 
 ## Soft-deleted body
 
-When a user deletes their own post (via `/wayd delete`), we can't actually remove the issue — non-admins lack that permission. Instead:
+When a user deletes their own post (via `/wayd delete`), we can't actually remove the issue, non-admins lack that permission. Instead:
 
 ```
 [deleted by author] <!-- wayd:v1 deleted=true -->
@@ -56,8 +56,8 @@ We also `close` and `lock` the issue so no further comments can be added. The sc
 ## Labels
 
 Every WAYD post gets exactly two labels:
-- `wayd-post` — identifies any WAYD post (used for filtering in `gh issue list`)
-- `vibe:<slug>` — one of `vibe:cursed-code`, `vibe:rip-me`, `vibe:brain-melt`, `vibe:dark-arts`, `vibe:hot-take`, `vibe:shower-thought`, `vibe:existential`, `vibe:procrastinating`
+- `wayd-post`: identifies any WAYD post (used for filtering in `gh issue list`)
+- `vibe:<slug>`: one of `vibe:cursed-code`, `vibe:rip-me`, `vibe:brain-melt`, `vibe:dark-arts`, `vibe:hot-take`, `vibe:shower-thought`, `vibe:existential`, `vibe:procrastinating`
 
 Labels must exist on the repo before they can be applied. The repo owner creates them once at setup time (see the `setup-labels.sh` script in the repo root, if present, or do it manually via GitHub UI).
 
@@ -91,6 +91,6 @@ If a post body has no marker, `vibe` is `None` and `deleted` is `False`. The scr
 If we ever need a `v2` schema (e.g. adding a "language=<code>" attribute for language-filtered scrolling):
 
 1. Bump `marker_version` in `config.yml`.
-2. New posts use `v2`. Old posts keep `v1` — `parse_post_body` already handles both because it accepts any `v\d+`.
+2. New posts use `v2`. Old posts keep `v1`: `parse_post_body` already handles both because it accepts any `v\d+`.
 3. Update `parse_post_body` to extract any new attributes you care about.
 4. Backward compatibility is automatic: code that only reads `vibe` and `deleted` works against both versions.

@@ -3,10 +3,10 @@
 flag on each reply.
 
 Subcommand:
-  fetch    — emits {ok, posts: [{id, vibe_emoji, vibe_slug, text, created_relative,
+  fetch   : emits {ok, posts: [{id, vibe_emoji, vibe_slug, text, created_relative,
                                  reactions, new_replies: [{author, text, created_relative}],
                                  total_replies}]}
-  mark_read  — updates last_check_ts to now, emits {ok}
+  mark_read : updates last_check_ts to now, emits {ok}
 """
 
 from __future__ import annotations
@@ -125,7 +125,7 @@ def _title_preview(text: str) -> str:
 
 def _summarize_reactions(groups: list[dict]) -> list[dict]:
     # Duplicated from scroll.py rather than importing to keep each script
-    # standalone — keeps the dependency graph readable. If this grows,
+    # standalone: keeps the dependency graph readable. If this grows,
     # promote to shared.py.
     cfg = shared.load_config()
     api_to_emoji = {r["api_name"].lower(): r["emoji"] for r in cfg["reactions"]}

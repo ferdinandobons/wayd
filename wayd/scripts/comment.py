@@ -2,7 +2,7 @@
 """Post a comment (reply) on a WAYD post.
 
 Subcommand:
-  post --post-id N --text T    — emits {ok}
+  post --post-id N --text T   : emits {ok}
 """
 
 from __future__ import annotations

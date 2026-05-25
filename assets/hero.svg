@@ -1,0 +1,177 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" role="img" aria-labelledby="title desc">
+  <title id="title">WAYD — What Are You Doing?</title>
+  <desc id="desc">A terminal-styled hero illustration for WAYD, the coffee break for programmers using AI coding agents. Eight vibe chips: cursed-code, rip-me, brain-melt, dark-arts, hot-take, shower-thought, existential, procrastinating.</desc>
+
+  <defs>
+    <!-- Subtle vertical gradient: dark blueprint background -->
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0d1117"/>
+      <stop offset="100%" stop-color="#161b22"/>
+    </linearGradient>
+
+    <!-- Terminal window: slightly lighter than the background -->
+    <linearGradient id="window" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1c2128"/>
+      <stop offset="100%" stop-color="#161b22"/>
+    </linearGradient>
+
+    <!-- Title accent: warm dev-vibe glow -->
+    <linearGradient id="titleGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#79c0ff"/>
+      <stop offset="50%" stop-color="#d2a8ff"/>
+      <stop offset="100%" stop-color="#ff7b72"/>
+    </linearGradient>
+
+    <!-- Soft glow under the title -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Reusable "chip" shape: rounded rectangle for vibes -->
+    <symbol id="chip" overflow="visible">
+      <rect x="0" y="0" rx="22" ry="22" width="240" height="56" fill="#21262d" stroke="#30363d" stroke-width="1"/>
+    </symbol>
+
+    <!-- Cursor blink (static fallback for SVG-without-CSS environments) -->
+    <style>
+      @keyframes blink { 0%, 49% { opacity: 1 } 50%, 100% { opacity: 0 } }
+      .cursor { animation: blink 1s steps(2, end) infinite; }
+      .mono { font-family: "JetBrains Mono", "Fira Code", "SF Mono", "Menlo", "Consolas", "Courier New", monospace; }
+      .sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif; }
+    </style>
+  </defs>
+
+  <!-- Page background -->
+  <rect width="1280" height="640" fill="url(#bg)"/>
+
+  <!-- Faint grid dots, very subtle, code-editor feel -->
+  <g fill="#21262d" opacity="0.45">
+    <circle cx="40" cy="40" r="1"/>
+    <circle cx="120" cy="40" r="1"/>
+    <circle cx="200" cy="40" r="1"/>
+    <circle cx="40" cy="120" r="1"/>
+    <circle cx="1240" cy="40" r="1"/>
+    <circle cx="1160" cy="40" r="1"/>
+    <circle cx="1240" cy="120" r="1"/>
+    <circle cx="1240" cy="600" r="1"/>
+    <circle cx="40" cy="600" r="1"/>
+    <circle cx="640" cy="40" r="1"/>
+    <circle cx="640" cy="600" r="1"/>
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- Terminal window frame                                         -->
+  <!-- ============================================================ -->
+  <g transform="translate(80, 70)">
+    <!-- Window body -->
+    <rect x="0" y="0" rx="14" ry="14" width="1120" height="500" fill="url(#window)" stroke="#30363d" stroke-width="1"/>
+
+    <!-- Title bar -->
+    <rect x="0" y="0" rx="14" ry="14" width="1120" height="44" fill="#0d1117"/>
+    <rect x="0" y="20" width="1120" height="24" fill="#0d1117"/>
+
+    <!-- Window controls: red / yellow / green -->
+    <circle cx="24" cy="22" r="7" fill="#ff5f57"/>
+    <circle cx="46" cy="22" r="7" fill="#febc2e"/>
+    <circle cx="68" cy="22" r="7" fill="#28c840"/>
+
+    <!-- Path label in the title bar -->
+    <text x="560" y="27" text-anchor="middle" class="mono" font-size="13" fill="#7d8590" letter-spacing="0.5">
+      ~/wayd : main
+    </text>
+
+    <!-- ============================================================ -->
+    <!-- Big WAYD wordmark                                              -->
+    <!-- ============================================================ -->
+    <g transform="translate(560, 145)" text-anchor="middle">
+      <text class="mono" font-size="120" font-weight="800" fill="url(#titleGrad)" filter="url(#glow)" letter-spacing="6">
+        WAYD
+      </text>
+    </g>
+
+    <!-- Expansion -->
+    <g transform="translate(560, 215)" text-anchor="middle">
+      <text class="mono" font-size="22" fill="#7d8590" letter-spacing="2">
+        What Are You Doing?
+      </text>
+    </g>
+
+    <!-- Tagline -->
+    <g transform="translate(560, 263)" text-anchor="middle">
+      <text class="sans" font-size="18" fill="#c9d1d9">
+        the coffee break for programmers using AI coding agents.
+      </text>
+    </g>
+
+    <!-- ============================================================ -->
+    <!-- Eight vibe chips, 2 rows x 4                                   -->
+    <!-- ============================================================ -->
+    <!-- Row 1 -->
+    <g transform="translate(60, 320)">
+      <!-- chip 1: cursed-code -->
+      <use href="#chip" x="0" y="0"/>
+      <text x="22" y="36" font-size="26">🤡</text>
+      <text x="56" y="36" class="mono" font-size="16" fill="#c9d1d9">cursed-code</text>
+
+      <!-- chip 2: rip-me -->
+      <use href="#chip" x="260" y="0"/>
+      <text x="282" y="36" font-size="26">🪦</text>
+      <text x="316" y="36" class="mono" font-size="16" fill="#c9d1d9">rip-me</text>
+
+      <!-- chip 3: brain-melt -->
+      <use href="#chip" x="520" y="0"/>
+      <text x="542" y="36" font-size="26">🫠</text>
+      <text x="576" y="36" class="mono" font-size="16" fill="#c9d1d9">brain-melt</text>
+
+      <!-- chip 4: dark-arts -->
+      <use href="#chip" x="780" y="0"/>
+      <text x="802" y="36" font-size="26">🧙</text>
+      <text x="836" y="36" class="mono" font-size="16" fill="#c9d1d9">dark-arts</text>
+    </g>
+
+    <!-- Row 2 -->
+    <g transform="translate(60, 396)">
+      <!-- chip 5: hot-take -->
+      <use href="#chip" x="0" y="0"/>
+      <text x="22" y="36" font-size="26">🔥</text>
+      <text x="56" y="36" class="mono" font-size="16" fill="#c9d1d9">hot-take</text>
+
+      <!-- chip 6: shower-thought -->
+      <use href="#chip" x="260" y="0"/>
+      <text x="282" y="36" font-size="26">💭</text>
+      <text x="316" y="36" class="mono" font-size="16" fill="#c9d1d9">shower-thought</text>
+
+      <!-- chip 7: existential -->
+      <use href="#chip" x="520" y="0"/>
+      <text x="542" y="36" font-size="26">🤔</text>
+      <text x="576" y="36" class="mono" font-size="16" fill="#c9d1d9">existential</text>
+
+      <!-- chip 8: procrastinating -->
+      <use href="#chip" x="780" y="0"/>
+      <text x="802" y="36" font-size="26">☕</text>
+      <text x="836" y="36" class="mono" font-size="16" fill="#c9d1d9">procrastinating</text>
+    </g>
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- Command-prompt accent at the bottom                            -->
+  <!-- ============================================================ -->
+  <g transform="translate(80, 605)">
+    <text class="mono" font-size="14" fill="#7d8590">
+      <tspan fill="#79c0ff">$</tspan>
+      <tspan dx="8" fill="#c9d1d9">/wayd scroll</tspan>
+      <tspan dx="8" class="cursor" fill="#c9d1d9">▌</tspan>
+    </text>
+  </g>
+
+  <!-- Subtle bottom-right credit -->
+  <g transform="translate(1200, 612)">
+    <text text-anchor="end" class="mono" font-size="11" fill="#484f58" letter-spacing="0.5">
+      github.com/ferdinandobons/wayd
+    </text>
+  </g>
+</svg>

@@ -2,7 +2,7 @@
 """Add a reaction to a WAYD post.
 
 Subcommand:
-  add --post-id N --emoji E    — emits {ok}
+  add --post-id N --emoji E   : emits {ok}
 
 We map the user's emoji (👍 😂 ❤️ 🎉 🚀 👀 😭) to the GitHub API name
 ("+1", "laugh", "heart", "hooray", "rocket", "eyes", "confused") using

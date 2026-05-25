@@ -2,13 +2,13 @@
 """Create, edit, and soft-delete WAYD posts.
 
 Subcommands:
-  check_rate_limit             — emits {ok: bool, retry_in_min?: int}
-  publish --vibe S --text T    — creates the issue, emits {ok, post_id, url}
-  edit --post-id N --text T    — edits the body, emits {ok}
-  soft_delete --post-id N      — locks/closes/marks body, emits {ok}
+  check_rate_limit            : emits {ok: bool, retry_in_min?: int}
+  publish --vibe S --text T   : creates the issue, emits {ok, post_id, url}
+  edit --post-id N --text T   : edits the body, emits {ok}
+  soft_delete --post-id N     : locks/closes/marks body, emits {ok}
 
 All output is JSON on stdout (via shared.emit). User-facing strings live in
-SKILL.md and the calling Claude prompt — this script only handles mechanics.
+SKILL.md and the calling Claude prompt, this script only handles mechanics.
 """
 
 from __future__ import annotations

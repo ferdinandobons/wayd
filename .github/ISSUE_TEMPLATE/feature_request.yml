@@ -1,5 +1,5 @@
 name: 💡 Feature request or bug report
-description: Suggest a new feature, report a bug, or share feedback on the WAYD skill itself (not a post — for posts use /wayd post in your AI coding agent).
+description: Suggest a new feature, report a bug, or share feedback on the WAYD skill itself (not a post, for posts use /wayd post in your AI coding agent).
 labels: ["feature-request"]
 title: "[idea] "
 body:
@@ -8,7 +8,7 @@ body:
       value: |
         Thanks for taking the time to suggest something.
 
-        **This template is for the WAYD skill itself** — bug reports, new vibe ideas, UX improvements, packaging issues, anything that would make WAYD better.
+        **This template is for the WAYD skill itself**: bug reports, new vibe ideas, UX improvements, packaging issues, anything that would make WAYD better.
 
         **If you wanted to share a post (a "vibe"), close this and use `/wayd post` in your AI coding agent instead.** Posts created here won't show up in the scroll feed.
 
@@ -39,6 +39,6 @@ body:
     id: context
     attributes:
       label: Anything else?
-      description: Optional — agent you're using (Claude Code, Cursor, …), OS, screenshots, etc.
+      description: Optional: agent you're using (Claude Code, Cursor, …), OS, screenshots, etc.
     validations:
       required: false

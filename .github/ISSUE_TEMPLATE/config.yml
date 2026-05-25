@@ -1,4 +1,4 @@
-# Disable blank issues — every issue on this repo should come from the WAYD
+# Disable blank issues: every issue on this repo should come from the WAYD
 # skill or from one of the templates below (feature requests, moderation).
 # This stops random users from accidentally polluting the post feed by opening
 # an empty issue via the GitHub UI.

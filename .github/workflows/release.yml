@@ -24,7 +24,7 @@ jobs:
       - name: Derive version from tag
         id: version
         run: |
-          # GITHUB_REF is "refs/tags/v0.1.0" — strip prefix to get "v0.1.0"
+          # GITHUB_REF is "refs/tags/v0.1.0", strip prefix to get "v0.1.0"
           version="${GITHUB_REF#refs/tags/}"
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "Building WAYD skill bundle for $version"
@@ -40,7 +40,7 @@ jobs:
       - name: Create bundle
         run: |
           # Strip per-user state (data/*) but keep the empty data/ folder
-          # via .gitkeep — the runtime will populate it on first run.
+          # via .gitkeep, the runtime will populate it on first run.
           mkdir -p dist
           cp -r wayd dist/wayd-staging
 

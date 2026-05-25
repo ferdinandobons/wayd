@@ -2,8 +2,8 @@
 """Fetch and shuffle the WAYD scroll feed.
 
 Subcommands:
-  fetch [--vibe S] [--limit N]   — emits {ok, posts: [...]}
-  thread --post-id N             — emits {ok, post, comments: [...]}
+  fetch [--vibe S] [--limit N]  : emits {ok, posts: [...]}
+  thread --post-id N            : emits {ok, post, comments: [...]}
 
 The caller (Claude, orchestrating SKILL.md) is responsible for the random
 selection and the "recently_seen" exclusion. We return the candidate pool,
@@ -132,7 +132,7 @@ def _summarize_reactions(groups: list[dict]) -> list[dict]:
     cfg = shared.load_config()
     # Build api_name -> emoji map from config
     api_to_emoji = {r["api_name"].lower(): r["emoji"] for r in cfg["reactions"]}
-    # gh returns groups with `content` like "THUMBS_UP", "LAUGH" — uppercase enum names
+    # gh returns groups with `content` like "THUMBS_UP", "LAUGH", uppercase enum names
     # We normalize to the lowercase api_name.
     enum_to_api = {
         "THUMBS_UP": "+1",
