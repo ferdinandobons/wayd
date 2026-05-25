@@ -29,13 +29,21 @@ jobs:
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "Building WAYD skill bundle for $version"
 
-      - name: Sanity check skill structure
+      - name: Sanity check skill + plugin structure
         run: |
-          # The skill must have a SKILL.md and a scripts/ directory.
+          # The skill must have a SKILL.md, scripts/, and config.yml
           test -f wayd/SKILL.md || { echo "Missing wayd/SKILL.md"; exit 1; }
           test -d wayd/scripts || { echo "Missing wayd/scripts/"; exit 1; }
           test -f wayd/config.yml || { echo "Missing wayd/config.yml"; exit 1; }
           echo "✓ Skill structure looks correct"
+
+          # The plugin marketplace must declare marketplace.json + plugin.json
+          test -f .claude-plugin/marketplace.json || { echo "Missing .claude-plugin/marketplace.json"; exit 1; }
+          test -f .claude-plugin/plugin.json || { echo "Missing .claude-plugin/plugin.json"; exit 1; }
+          # Validate they parse as JSON
+          python3 -c "import json; json.load(open('.claude-plugin/marketplace.json'))" || exit 1
+          python3 -c "import json; json.load(open('.claude-plugin/plugin.json'))" || exit 1
+          echo "✓ Plugin manifests look correct"
 
       - name: Create bundle
         run: |
