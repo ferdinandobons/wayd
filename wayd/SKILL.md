@@ -29,14 +29,24 @@ The reason: WAYD's whole charm is that it feels like a tiny social app embedded 
 
 Before any of these actions, you MUST show the user a clear preview/explanation and wait for an explicit yes before proceeding. This is not optional. It applies even if the user seems in a hurry or has confirmed similar actions earlier in the session.
 
-| Action | What you must show first |
-|--------|--------------------------|
-| Publishing a post | Full formatted preview + "Publish this? [y]es / [n]o / [e]dit" |
-| Soft-deleting own post | "This marks your post as `[deleted by author]`. It stays in threads but disappears from scroll. Others' replies remain visible. Sure? [y/n]" |
-| Editing own post | "Edit your post? Others may have already seen the original. Edits show as 'edited' to readers. [y/n]" |
-| Blocking a user | "Block @user? You won't see their posts or comments anymore. To unblock: `/wayd unblock @user`. [y/n]" |
-| First-run: add gh to Bash allowlist | "WAYD needs to call `gh` silently in the background. Add `gh issue *` and `gh api *` to allowed commands? Otherwise every action prompts. [y/n]" |
-| First-run: accept Code of Conduct | "By posting on WAYD you agree to the Code of Conduct: <link>. Accept? [y]" |
+**Use the `AskUserQuestion` tool for the confirmation prompt.** It renders as clickable / keyboard-selectable options across Claude Code (CLI + Desktop), Cursor, Copilot CLI, and Claude.ai. A plain-text `[y/n]` falls back to typing — slower and easy to mistype. The `AskUserQuestion` tool also auto-includes an "Other" escape hatch, so the user can always provide a custom answer if none of the options fit.
+
+Show the preview/explanation BEFORE calling `AskUserQuestion`, then call the tool with the options below. Each option's `label` is short (1-5 words). The `description` carries the consequence in plain language. Wait for the tool to return before doing anything.
+
+| Action | Preview / explanation shown above the prompt | AskUserQuestion options |
+|--------|---------------------------------------------|------------------------|
+| Publishing a post | Full formatted post preview (header bar, vibe + username + "just now", body, footer bar) | `Publish` / `Cancel` / `Edit` |
+| Soft-deleting own post | "This marks your post as `[deleted by author]`. It stays in threads but disappears from scroll. Others' replies remain visible." | `Delete it` / `Keep it` |
+| Editing own post | "Edit your post? Others may have already seen the original. Edits show as 'edited' to readers." | `Edit` / `Cancel` |
+| Blocking a user | "Block @user? You won't see their posts or comments anymore. To unblock later: `/wayd unblock @user`." | `Block @user` / `Cancel` |
+| First-run: add gh to Bash allowlist | "WAYD needs to call `gh` silently in the background. Adding `gh issue *` and `gh api *` to your allowed commands means no permission prompts per action." | `Add to allowlist` / `Skip (I'll approve each)` |
+| First-run: accept Code of Conduct | "By posting on WAYD you agree to the Code of Conduct: <link>. The short version: no harassment, no NSFW, no spam." | `I accept` / `Not now` |
+
+For each `AskUserQuestion` option, write a meaningful `description` so the choice is clear at a glance. Example for "Publishing a post":
+
+- `Publish`: "Posts the vibe publicly under your GitHub handle. Editable for 5 minutes."
+- `Cancel`: "Nothing happens. Your draft is discarded."
+- `Edit`: "Go back and change the text or vibe before publishing."
 
 The reason: these actions create permanent or semi-permanent effects (a public post, a deletion others may notice, a blocked user, a settings change). The user must understand what's about to happen. Skipping a confirmation here breaks trust.
 
@@ -133,12 +143,11 @@ The setup flow:
    >
    > (If you've forked WAYD to a different host repo, substitute the URL with the value of `repo:` from `wayd/config.yml`.)
    >
-   > Accept the Code of Conduct to start? [y/n]"
+   > Accept the Code of Conduct to start?"
 
-   If the user says yes, set `coc_accepted: true`.
-   If no, end politely: "No worries: come back anytime. WAYD will be here."
+   Then call `AskUserQuestion` with options `I accept` and `Not now`. If `I accept`, set `coc_accepted: true`. If `Not now`, end politely: "No worries: come back anytime. WAYD will be here."
 
-5. **Ask about the gh allowlist.** Show the confirmation message from principle 2 about adding `gh issue *` and `gh api *` to the Bash allowlist. If yes, append these patterns to the user's `.claude/settings.json` Bash allowlist (or local equivalent: see references/settings-allowlist.md). If no, proceed but warn that they'll see a permission prompt for each command.
+5. **Ask about the gh allowlist.** Show the explanation from principle 2 (about adding `gh issue *` and `gh api *` to the Bash allowlist), then call `AskUserQuestion` with options `Add to allowlist` and `Skip (I'll approve each)`. If `Add to allowlist`, append these patterns to the user's `.claude/settings.json` Bash allowlist (or local equivalent: see references/settings-allowlist.md). If `Skip`, proceed but warn that they'll see a permission prompt for each command.
 
 6. **Mark setup complete.** Set `setup_complete: true` and `seen_tour: true` in `wayd/data/identity.json`. Show:
    > "All set. What now?
@@ -171,7 +180,7 @@ Orchestrate the compose flow yourself, walking the user through these steps. The
 
 3. **Check rate limit.** Call `scripts/post.py check_rate_limit`. If the user has already posted 5 times in the last hour, abort with the friendly rate-limit message from §4. Don't proceed.
 
-4. **Show preview.** Render the post exactly as it will appear in scroll:
+4. **Show preview.** Render the post in a message above the confirmation, exactly as it will appear in scroll:
    ```
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    <emoji> <vibe-slug>   ·   @<username>   ·   just now
@@ -180,15 +189,18 @@ Orchestrate the compose flow yourself, walking the user through these steps. The
    <the text>
 
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-   Publish this? [y]es · [n]o · [e]dit
    ```
+   Then call the `AskUserQuestion` tool with the prompt "Publish this?" and these three options:
 
-5. **On confirm**, call `scripts/post.py publish --vibe <slug> --text <text>`. The script returns either success (with the new post's local ID) or failure. On success, show: "✓ Posted. Your vibe is live in others' scroll." Record the post ID and timestamp in `wayd/data/last-check.json` so the user can immediately `/wayd edit` or `/wayd delete` it for the next 5 min.
+   - `Publish` — description: "Posts the vibe publicly under your GitHub handle. Editable for 5 minutes."
+   - `Cancel` — description: "Nothing happens. Your draft is discarded."
+   - `Edit` — description: "Go back and change the text or vibe before publishing."
 
-6. **On `n`**, cancel: "Nothing posted. Come back when you've got something to say."
+5. **On `Publish`**, call `scripts/post.py publish --vibe <slug> --text <text>`. The script returns either success (with the new post's local ID) or failure. On success, show: "✓ Posted. Your vibe is live in others' scroll." Record the post ID and timestamp in `wayd/data/last-check.json` so the user can immediately `/wayd edit` or `/wayd delete` it for the next 5 min.
 
-7. **On `e`**, loop back to step 2 with the previous text pre-filled.
+6. **On `Cancel`**, end with: "Nothing posted. Come back when you've got something to say."
+
+7. **On `Edit`**, loop back to step 2 with the previous text pre-filled.
 
 ---
 
