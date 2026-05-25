@@ -114,7 +114,7 @@
   <rect width="1280" height="460" fill="url(#bg)"/>
 
   <!-- ============================================================ -->
-  <!-- HEADER: title + tagline + vibe-emoji row                       -->
+  <!-- HEADER: title + tagline + subtagline                           -->
   <!-- ============================================================ -->
   <g transform="translate(640, 70)" text-anchor="middle">
     <!-- WAYD wordmark -->
@@ -122,14 +122,14 @@
       WAYD
     </text>
 
-    <!-- Tagline -->
+    <!-- Tagline (primary) -->
     <text y="30" class="sans" font-size="16" fill="#c9d1d9">
       The coffee break for programmers using AI coding agents.
     </text>
 
-    <!-- 8 vibe emojis as a single horizontal row -->
-    <text y="60" class="mono" font-size="18" letter-spacing="14" fill="#c9d1d9">
-      🤡 🪦 🫠 🧙 🔥 💭 🤔 ☕
+    <!-- Subtagline (secondary, smaller, dimmer) -->
+    <text y="54" class="sans" font-size="13" fill="#7d8590">
+      A meme-y social feed living inside Claude Code, Cursor, and Copilot. Built on GitHub Issues. No server, no signup.
     </text>
   </g>
 
