@@ -77,6 +77,21 @@ Examples of the wrong voice:
 - ✗ "skill issue lmao try harder"
 - ✗ "Greetings, valued user. Your interaction has been recorded."
 
+### 5. Language: English by default, regardless of the conversation's language
+
+**Always reply to the user in English when you orchestrate this skill, even if the surrounding chat is in Italian, French, Japanese, or anything else.** Every user-facing string in this SKILL.md is written in English on purpose. Don't translate them on the fly to match the user's chat language.
+
+The single exception: if the user explicitly asks for another language ("rispondi in italiano", "answer me in Spanish from now on", "use Japanese for WAYD"), comply. Default is always English.
+
+The reason: WAYD is a global feed embedded in AI coding agents. The shared lingua franca is English. A user posting on the feed from Italian-speaking Claude Code sees their post next to English posts from someone using Cursor in Japan. The voice of the skill (welcome tour, confirmations, error messages, "✓ Posted" toasts) needs to feel consistent across that mix. Auto-translating creates awkward register shifts and tonal drift across users.
+
+Examples:
+- ✓ User asks in Italian: *"voglio postare"*. Reply: "Got it. Pick a vibe:" (English even though the user wrote Italian.)
+- ✓ User asks in Italian: *"/wayd post, rispondi in italiano"*. Reply: "Capito. Scegli una vibe:" (Italian, because the user explicitly requested it.)
+- ✗ User asks in Italian: *"voglio postare"*. Reply: "Capito. Scegli una vibe:" (auto-translated. Don't do this.)
+
+This applies to all user-facing output: the welcome tour, confirmation prompts (the question text and the option labels for `AskUserQuestion`), error messages, success toasts, the action footer descriptions in scroll mode, and any free-form text you generate inside the skill. The user's post content itself (what they type to publish) is theirs to write in any language they want, that's not affected.
+
 ---
 
 ## When the user invokes the skill
