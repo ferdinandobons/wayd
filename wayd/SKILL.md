@@ -161,19 +161,35 @@ The setup flow:
 
 Orchestrate the compose flow yourself, walking the user through these steps. The Python scripts handle individual mechanics, you sequence them. There is no single "compose" subcommand: call `scripts/post.py check_rate_limit` first to validate, then `scripts/post.py publish --vibe <slug> --text <text>` at the end.
 
-1. **Ask for vibe.** Show the 8 vibes as a numbered menu:
-   ```
-   Pick a vibe:
-     1. 🤡 cursed-code  : "this code is an abomination"
-     2. 🪦 rip-me       : "something died, possibly me"
-     3. 🫠 brain-melt   : "my brain is leaking"
-     4. 🧙 dark-arts    : "I solved it with evil"
-     5. 🔥 hot-take     : "opinion that will start a war"
-     6. 💭 shower-thought: "random thought"
-     7. 🤔 existential  : "is this the life I wanted?"
-     8. ☕ procrastinating: "I should be working"
-   ```
-   Accept either the number (1-8) or the slug ("cursed-code"). If first-time composing, also add: "Each vibe is a mood-tag, not a topic. Pick whichever fits how you feel right now."
+1. **Ask for vibe.** Use the `AskUserQuestion` tool, NOT a plain-text menu. Typing emojis in some terminals (especially Claude Code CLI on macOS) is non-obvious for users, so clickable options remove that friction entirely.
+
+   Show all 8 vibes as text first (so the user has the full list visible for context), then call `AskUserQuestion` paginated over two rounds because the tool caps at 4 options.
+
+   Optional intro line (only on first compose, gated by `seen_compose_hint` in identity.json): "Each vibe is a mood-tag, not a topic. Pick whichever fits how you feel right now."
+
+   Then:
+
+   **Round 1.** Call `AskUserQuestion` with the prompt "Pick a vibe:" and these 4 options. The user picks one, OR taps the auto-added "Other" to either type a slug like `existential` or jump to round 2.
+
+   - `🤡 cursed-code` : "this code is an abomination"
+   - `🪦 rip-me` : "something died, possibly me"
+   - `🫠 brain-melt` : "my brain is leaking"
+   - `🧙 dark-arts` : "I solved it with evil"
+
+   If the user picks one, store the slug and go to step 2.
+
+   If the user picks "Other" and types a slug like `hot-take` or `existential`, accept it (validate against the 8 known slugs).
+
+   If the user picks "Other" and types something like "more" / "show others" / "next" / "altre" (any unmapped intent that suggests they want round 2), call `AskUserQuestion` again with the prompt "Other vibes:" and these 4 options:
+
+   **Round 2.**
+
+   - `🔥 hot-take` : "opinion that will start a war"
+   - `💭 shower-thought` : "random thought"
+   - `🤔 existential` : "is this the life I wanted?"
+   - `☕ procrastinating` : "I should be working"
+
+   If the user picks one, store the slug and go to step 2. If they pick "Other" and type something unmapped, ask again with the friendly message: "I don't recognize that vibe. The 8 options are: cursed-code, rip-me, brain-melt, dark-arts, hot-take, shower-thought, existential, procrastinating."
 
 2. **Ask for text.** "Got it: <emoji> <vibe>. What's going on? (1-1000 chars, anything you want.)"
    Validate: if empty or >1000 chars, ask again with a specific message ("Too long by N chars. Trim it down.").
@@ -223,20 +239,49 @@ This is the core experience. Treat it as a tight loop: show a post → wait for 
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    <reactions summary>                          💬 N replies
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-   What now? [n]ext  [😂❤️🤯😭🚀👀]  [c]omment  [t]hread  [q]uit
    ```
    The relative time should be human-friendly: "2h ago", "yesterday", "3 days ago".
    The reactions summary shows only emojis that have at least one reaction, with their count.
 
-4. **First time in scroll**, prepend a one-liner above the first post: "Tip: type `n` to skip, emoji to react, `c: <text>` to reply, `t` to read the thread, `q` to quit." Set `seen_scroll_hint: true` in identity.json.
+4. **First time in scroll**, prepend a one-liner above the first post: "Tip: pick an action from the buttons, or type `q` to quit anytime." Set `seen_scroll_hint: true` in identity.json.
 
-5. **Wait for input.** Handle each variant:
-   - `n` / `next` / `skip` / silent enter → record the post ID into `recently_seen`, go to step 2.
-   - An emoji or `react X` → call `scripts/react.py add --post-id <id> --emoji <e>`, show "✓ reacted", record as seen, go to step 2.
-   - `c: <text>` / `comment: <text>` / `reply: <text>` → validate length client-side: if over 1000 chars, say "Replies share the 1000-char limit with posts. Trim by N chars." and re-prompt. Otherwise call `scripts/comment.py post --post-id <id> --text <text>`. Show "✓ replied", record as seen, go to step 2.
-   - `t` / `open thread` / "show replies" → call `scripts/scroll.py thread --post-id <id>` and render all comments under the post, then re-show the same action menu (don't advance).
-   - `q` / `quit` / `bye` / `exit` → exit with a friendly sign-off, persist `recently_seen`.
+5. **Ask the user what to do next.** Call `AskUserQuestion` with the prompt "What now?" and these 4 options. The user clicks one (or taps "Other" to type `quit`, a specific emoji, or any other input). Typing emojis in a terminal is the single hardest input for new users, so this step is mandatory: do NOT show a plain-text action footer.
+
+   - `Next` : "Skip this post, show me the next one."
+   - `React` : "Add an emoji reaction. I'll pick the emoji on the next step."
+   - `Reply` : "Write a one-line reply to this post."
+   - `Thread` : "Show me the existing replies on this post first."
+
+   Handle each variant:
+
+   - **Next (or "Other" with input like `n`, `skip`)** → record the post ID into `recently_seen`, go to step 2.
+   - **React** → go to step 5a (reaction picker).
+   - **Reply** → go to step 5b (reply composer).
+   - **Thread** → call `scripts/scroll.py thread --post-id <id>` and render all comments under the post, then re-run step 5 on the same post (don't advance).
+   - **Other** with input like `q` / `quit` / `bye` / `exit` → exit with a friendly sign-off, persist `recently_seen`.
+   - **Other** with a single emoji (`😂`, `❤️`, etc.) → treat as a direct reaction shortcut, call `scripts/react.py` with that emoji, advance.
+
+   **5a. Reaction picker.** WAYD exposes 7 reactions. `AskUserQuestion` caps at 4, so paginate over two rounds.
+
+   **Round 1 (popular reactions):**
+
+   - `😂 Laugh` : "Funny / I felt that."
+   - `❤️ Heart` : "Love this."
+   - `🚀 Rocket` : "Nice / shipped / well done."
+   - `👀 Eyes` : "Watching this / interested."
+
+   If the user picks one, call `scripts/react.py add --post-id <id> --emoji <e>`, show "✓ reacted", record as seen, advance to next post.
+
+   If the user picks "Other" with input like "more" / "altre" / "see more" / "show others", show **Round 2 (other reactions):**
+
+   - `👍 Thumbs up` : "Approve / acknowledge."
+   - `🎉 Celebrate` : "Big win for you."
+   - `😭 Sob` : "Same / I feel this pain."
+   - (no 4th option in round 2; "Other" auto for fallback)
+
+   If the user picks "Other" with input like a slug or emoji that maps to one of the 7 reactions, accept it. Otherwise, show: "I don't recognize that reaction. The 7 options are 😂 ❤️ 🚀 👀 👍 🎉 😭."
+
+   **5b. Reply composer.** Ask the user to write their reply text. Validate length: if empty, say "An empty reply is just silence." and re-ask. If over 1000 chars, say "Replies share the 1000-char limit with posts. Trim by N chars." and re-ask. Otherwise call `scripts/comment.py post --post-id <id> --text <text>`. Show "✓ replied", record as seen, advance to next post.
 
 **Note on `reply_count_capped`**: the `fetch` payload includes a `reply_count_capped` boolean per post. When true, the post has 100 or more replies but GitHub's batch API truncates at 100. Render the count as `💬 100+ replies` instead of `💬 100 replies` so the user knows there's more.
 
