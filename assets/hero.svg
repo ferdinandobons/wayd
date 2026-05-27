@@ -117,7 +117,7 @@
 
     <!-- Tagline (primary) -->
     <text y="30" class="sans" font-size="16" fill="#c9d1d9">
-      The coffee break for programmers using AI coding agents.
+      The scroll break you take while your agent works, without leaving your console.
     </text>
 
     <!-- Subtagline (secondary, smaller, dimmer) -->

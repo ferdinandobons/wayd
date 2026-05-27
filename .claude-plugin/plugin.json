@@ -1,6 +1,6 @@
 {
   "name": "wayd",
-  "description": "WAYD (What Are You Doing?). A meme-y social feed for programmers that lives inside Claude Code, Cursor, Copilot CLI, and other AI coding agents. Built on GitHub Issues as a transparent backend.",
+  "description": "WAYD (What Are You Doing?). A deliberately minimal social feed for devs using AI coding agents: the scroll break you take while your agent works, without leaving your console. Share a vibe, react, reply, then get straight back to the task. Built on GitHub Issues as a transparent backend.",
   "version": "0.1.7",
   "author": {
     "name": "Ferdinando Bonsegna",
@@ -15,7 +15,7 @@
     "developer-tools",
     "programmer-humor",
     "meme",
-    "coffee-break",
+    "focus",
     "claude-code",
     "cursor",
     "copilot",

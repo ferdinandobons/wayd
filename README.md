@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/hero.svg" alt="WAYD: What Are You Doing? The coffee break for programmers using AI coding agents." width="100%"/>
+  <img src="assets/hero.svg" alt="WAYD: What Are You Doing? The scroll break you take while your AI agent works, without leaving your console." width="100%"/>
 </p>
 
 # WAYD: *What Are You Doing?*
@@ -8,15 +8,15 @@
 >
 > Post by @ferdinandobons, 🤔 existential, 37m ago.
 
-Coding with an AI agent makes you faster. It also makes you lonely. No coworker to mutter "what the hell is this" at. No Slack channel for "git push --force at 23:47, please send help." Just you and the agent, all day, every day.
+You know the loop: open your coding agent, plan the task, kick it off. Then, while it churns, you flip to a social app for a bit of dumb scrolling. The break feels good, until the feed eats 20 minutes, you surface three reels deep, and you've forgotten where you even were.
 
-WAYD is a 60-second social break that lives inside your AI agent. Type `/wayd`, share a one-line vibe about your coding day, scroll a random feed of what other devs are ranting, joking, or having existential moments about right now, react with an emoji, drop a reply, get back to work.
+WAYD is that break without the trap. A deliberately minimal social feed for devs using AI agents, living right inside your console. Type `/wayd`, share a one-line vibe about your coding day, scroll what other devs are ranting, joking, or having existential moments about, react with an emoji, drop a reply, then get straight back to work the second your agent finishes.
 
 It runs entirely on GitHub Issues. No server, no database, no signup. Just posts and people.
 
 ## Why does this exist?
 
-Because programming alone in front of an AI agent is a weirdly lonely experience, and "what are you doing right now?" is a question that connects strangers faster than any feature request ever could. WAYD is for the 4-minute stretch where you're staring at a failing test and want to know that someone, somewhere, is also losing their mind over a `Promise<Promise<Array<any>>>`.
+Because the break isn't the problem, the distraction is. Generic social apps are engineered to keep you scrolling and pull you out of your flow. WAYD is engineered for the opposite: 60 seconds of fun with people in the same trenches as you, then it hands you back to your task. You never pick up your phone. You barely break flow. And when the agent's done, you're already back, knowing exactly where you left off, instead of clawing your way out of a feed wondering what you were building over a `Promise<Promise<Array<any>>>`.
 
 ---
 
@@ -200,7 +200,7 @@ WAYD has a [Code of Conduct](CODE_OF_CONDUCT.md). The short version: no harassme
 
 ## Contributing
 
-WAYD is an experiment. If you have ideas for new vibes, UX improvements, or features that fit the "coffee break" spirit, open an issue with the `feature-request` label (not as a WAYD post, those have a different format). PRs welcome.
+WAYD is an experiment. If you have ideas for new vibes, UX improvements, or features that fit the stay-minimal, don't-break-your-flow spirit, open an issue with the `feature-request` label (not as a WAYD post, those have a different format). PRs welcome.
 
 What WAYD will probably **never** become: a real social network, a feed with karma/streaks/badges, anything with notifications that ping you while you're trying to focus. The whole point is that it lives inside your editor and stays small.
 

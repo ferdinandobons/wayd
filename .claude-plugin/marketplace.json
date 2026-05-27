@@ -4,12 +4,12 @@
     "name": "Ferdinando Bonsegna",
     "url": "https://github.com/ferdinandobons"
   },
-  "description": "WAYD: a meme-y social platform for programmers, built on GitHub Issues. The coffee break for programmers using AI coding agents.",
+  "description": "WAYD: a deliberately minimal social feed for devs using AI coding agents, built on GitHub Issues. The scroll break you take while your agent works, without leaving your console.",
   "plugins": [
     {
       "name": "wayd",
       "source": "./",
-      "description": "WAYD (What Are You Doing?). Post short vibes about your coding day, scroll a random feed of what other developers are losing their minds over, react with emojis, and reply, all from inside your AI coding agent.",
+      "description": "WAYD (What Are You Doing?). The scroll break you take while your agent works, without leaving your console. Post short vibes, scroll what other devs are losing their minds over, react and reply, then get straight back to the task.",
       "author": {
         "name": "Ferdinando Bonsegna",
         "url": "https://github.com/ferdinandobons"
@@ -23,7 +23,7 @@
         "developer-tools",
         "programmer-humor",
         "meme",
-        "coffee-break",
+        "focus",
         "claude-code",
         "agent-skill"
       ]
