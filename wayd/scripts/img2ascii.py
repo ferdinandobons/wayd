@@ -1,25 +1,15 @@
 #!/usr/bin/env python3
 """Convert an image to high-quality ASCII art for WAYD posts.
 
-Produces results comparable to asciiart.eu: edge-enhanced, sharpened,
-contrast-boosted, with a dense 70-char gradient.
+Uses Jarvis-Judice-Ninke error diffusion dithering with a sparse character
+set and brightness threshold — matching the asciiart.eu aesthetic:
+light/background areas become spaces, only edges and shadows get chars.
 
 Usage:
-  img2ascii.py --image PATH [--width N] [--invert] [--caption TEXT]
-               [--edge-weight F] [--sharpen] [--contrast F]
+  img2ascii.py --image PATH [--width N] [--invert] [--threshold N]
+               [--contrast F] [--caption TEXT]
 
 Prints JSON to stdout: {"ok": true, "art": "...", "chars": N}
-
-Options:
-  --image PATH       Image file (JPEG, PNG, GIF, WebP, DNG, …)
-  --width N          Width in chars (default: 100). Height auto-calculated.
-  --invert           Invert brightness (for light-background images).
-  --caption TEXT     Text appended below the art (2 blank lines separator).
-  --edge-weight F    How much edge detection to blend in, 0.0–1.0 (default 0.4).
-                     Higher = more defined outlines like asciiart.eu.
-  --sharpen          Apply sharpening before conversion (default: on).
-  --no-sharpen       Disable sharpening.
-  --contrast F       Contrast multiplier (default: 1.3). 1.0 = no change.
 """
 
 from __future__ import annotations
@@ -31,29 +21,23 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import shared  # noqa: E402
 
-# Dense 70-char gradient from dark to light (dark terminal).
-# Derived from the classic Paulm gradient used by most quality converters.
-_RAMP_DARK = r'$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,"^`\'. '
+# Sparse ramp dark→light. Last entry is space (bright pixels).
+_RAMP_DARK = "@%#*+:. "
 _RAMP_LIGHT = _RAMP_DARK[::-1]
-
-
-def _px(luminance: int, ramp: str) -> str:
-    return ramp[int(luminance / 255 * (len(ramp) - 1))]
 
 
 def image_to_ascii(
     image_path: str,
-    width: int = 100,
+    width: int = 120,
     invert: bool = False,
-    edge_weight: float = 0.4,
-    sharpen: bool = True,
-    contrast: float = 1.3,
+    contrast: float = 1.5,
+    threshold: int = 200,
     caption: str = "",
     max_chars: int | None = None,
 ) -> str:
-    """Return ASCII art string. Raises ValueError on failure."""
+    """Return ASCII art string using JJN dithering + threshold. Raises ValueError on failure."""
     try:
-        from PIL import Image, ImageEnhance, ImageFilter  # type: ignore[import]
+        from PIL import Image, ImageEnhance, ImageOps  # type: ignore[import]
     except ImportError:
         raise ValueError("Pillow is required: pip install Pillow")
 
@@ -64,25 +48,19 @@ def image_to_ascii(
     except Exception as exc:
         raise ValueError(f"Cannot open image: {exc}")
 
-    # Convert to RGB then grayscale (handles RGBA, P, CMYK, DNG/TIFF, etc.)
     img = img.convert("RGB")
-
-    # --- Preprocessing (mimics asciiart.eu quality pipeline) ---
-
-    if sharpen:
-        img = ImageEnhance.Sharpness(img).enhance(2.0)
 
     if contrast != 1.0:
         img = ImageEnhance.Contrast(img).enhance(contrast)
 
     gray = img.convert("L")
 
-    # Compute target height preserving aspect ratio.
-    # Terminal chars are ~2:1 tall:wide; 0.45 corrects for that.
+    # Equalize histogram so the full 0-255 range is used regardless of image tone
+    gray = ImageOps.equalize(gray)
+
     aspect = img.height / img.width
     height = max(1, int(width * aspect * 0.45))
 
-    # Shrink to fit max_chars budget if given (art-only chars, no caption).
     if max_chars is not None:
         caption_cost = len(caption) + 2 if caption else 0
         while width >= 20:
@@ -91,32 +69,41 @@ def image_to_ascii(
             width = int(width * 0.9)
             height = max(1, int(width * aspect * 0.45))
 
-    # Resize both base image and edge map to the target size.
-    base = gray.resize((width, height), Image.LANCZOS)
-
-    # Edge detection: find edges on a slightly blurred version for clean lines.
-    edge_src = gray.filter(ImageFilter.GaussianBlur(1)).filter(ImageFilter.FIND_EDGES)
-    edges = edge_src.resize((width, height), Image.LANCZOS)
-
-    # Blend: final_lum = base * (1 - w) + edges * w
-    # Edge pixels push luminance toward dark (dense chars = outlines).
-    base_px = base.tobytes()
-    edge_px = edges.tobytes()
+    gray = gray.resize((width, height), Image.LANCZOS)
 
     ramp = _RAMP_LIGHT if invert else _RAMP_DARK
-    lines: list[str] = []
+    n_chars = len(ramp) - 1  # last slot = space, reserved for threshold
+    step = threshold / n_chars
 
-    for row in range(height):
-        chars = []
-        for col in range(width):
-            idx = row * width + col
-            b = base_px[idx]
-            e = edge_px[idx]
-            # Invert edge contribution so edges → darker chars (denser).
-            blended = int(b * (1 - edge_weight) + (255 - e) * edge_weight)
-            blended = max(0, min(255, blended))
-            chars.append(_px(blended, ramp))
-        lines.append("".join(chars))
+    px = [[float(gray.getpixel((x, y))) for x in range(width)] for y in range(height)]
+
+    lines: list[str] = []
+    for y in range(height):
+        row: list[str] = []
+        for x in range(width):
+            old = max(0.0, min(255.0, px[y][x]))
+
+            if old >= threshold:
+                # Bright pixel → space, distribute error
+                err = old - 255.0
+                char = " "
+            else:
+                level = min(n_chars - 1, int(old / step))
+                err = old - level * step
+                char = ramp[level]
+
+            # Jarvis-Judice-Ninke error diffusion kernel (denominator 48)
+            for dy, dx, w in (
+                (0, 1, 7), (0, 2, 5),
+                (1, -2, 3), (1, -1, 5), (1, 0, 7), (1, 1, 5), (1, 2, 3),
+                (2, -2, 1), (2, -1, 3), (2, 0, 5), (2, 1, 3), (2, 2, 1),
+            ):
+                ny, nx = y + dy, x + dx
+                if 0 <= ny < height and 0 <= nx < width:
+                    px[ny][nx] += err * w / 48.0
+
+            row.append(char)
+        lines.append("".join(row).rstrip())
 
     art = "\n".join(lines)
     if caption:
@@ -125,15 +112,13 @@ def image_to_ascii(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="High-quality image → ASCII art.")
+    parser = argparse.ArgumentParser(description="High-quality image → ASCII art (JJN dithering).")
     parser.add_argument("--image", required=True)
-    parser.add_argument("--width", type=int, default=100)
+    parser.add_argument("--width", type=int, default=120)
     parser.add_argument("--invert", action="store_true")
     parser.add_argument("--caption", default="")
-    parser.add_argument("--edge-weight", type=float, default=0.4)
-    parser.add_argument("--sharpen", dest="sharpen", action="store_true", default=True)
-    parser.add_argument("--no-sharpen", dest="sharpen", action="store_false")
-    parser.add_argument("--contrast", type=float, default=1.3)
+    parser.add_argument("--contrast", type=float, default=1.5)
+    parser.add_argument("--threshold", type=int, default=200)
     parser.add_argument("--max-chars", type=int, default=None)
     args = parser.parse_args()
 
@@ -142,9 +127,8 @@ def main() -> None:
             image_path=args.image,
             width=args.width,
             invert=args.invert,
-            edge_weight=args.edge_weight,
-            sharpen=args.sharpen,
             contrast=args.contrast,
+            threshold=args.threshold,
             caption=args.caption,
             max_chars=args.max_chars,
         )

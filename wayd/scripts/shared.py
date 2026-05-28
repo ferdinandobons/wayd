@@ -266,12 +266,16 @@ def remove_blocked(username: str) -> bool:
 
 MARKER_RE = re.compile(r"<!--\s*wayd:(v\d+)\s+([^>]+?)\s*-->")
 
-# Matches the ASCII art block: <!-- wayd:art\n[art lines]\n-->
+# Matches the ASCII art block in <details> format:
+#   <details data-wayd-art>...<pre>...</pre>...</details>
 # Group 1 = the art content (may be multi-line).
 ART_MARKER_RE = re.compile(
-    r"<!--\s*wayd:art\n(.*?)\n-->",
+    r"<details data-wayd-art>.*?<pre>(.*?)</pre>.*?</details>",
     re.DOTALL,
 )
+
+# Also match the old HTML-comment format for backward compat with old posts.
+_ART_COMMENT_RE = re.compile(r"<!--\s*wayd:art\n(.*?)\n-->", re.DOTALL)
 
 
 def build_post_title(vibe_slug: str, vibe_emoji: str, body: str) -> str:
@@ -290,30 +294,43 @@ def build_post_body(vibe_slug: str, text: str, marker_version: str = "v1") -> st
 def build_post_body_with_art(
     vibe_slug: str, text: str, art: str, marker_version: str = "v1"
 ) -> str:
-    """Build issue body with embedded ASCII art in an HTML comment block.
+    """Build issue body with ASCII art in a collapsible <details> block.
 
-    The art block is invisible when GitHub renders the issue but parseable
-    by scroll.py. Format:
+    Visible on GitHub as '📎 ASCII image' (click to expand), and parseable
+    by scroll.py via ART_MARKER_RE. Uses <pre> for monospace rendering.
+    Format:
         <text>
 
-        <!-- wayd:art
+        <details data-wayd-art>
+        <summary>📎 ASCII image</summary>
+
+        <pre>
         [ascii lines]
-        -->
+        </pre>
+
+        </details>
+
         <!-- wayd:v1 vibe=<slug> -->
     """
-    art_block = f"<!-- wayd:art\n{art}\n-->"
+    art_block = f"<details data-wayd-art>\n<summary>📎 ASCII image</summary>\n\n<pre>\n{art}\n</pre>\n\n</details>"
     return f"{text.strip()}\n\n{art_block}\n\n<!-- wayd:{marker_version} vibe={vibe_slug} -->"
 
 
 def extract_art(body: str) -> str | None:
     """Return the ASCII art embedded in body, or None if not present."""
     m = ART_MARKER_RE.search(body)
-    return m.group(1) if m else None
+    if m:
+        return m.group(1)
+    # Backward compat: old posts used HTML comment format
+    m2 = _ART_COMMENT_RE.search(body)
+    return m2.group(1) if m2 else None
 
 
 def strip_art(body: str) -> str:
     """Return body with the ASCII art block removed (for display purposes)."""
-    return ART_MARKER_RE.sub("", body).strip()
+    body = ART_MARKER_RE.sub("", body)
+    body = _ART_COMMENT_RE.sub("", body)
+    return body.strip()
 
 
 def parse_post_body(body: str) -> dict[str, Any]:

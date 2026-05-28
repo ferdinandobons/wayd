@@ -85,7 +85,7 @@ def cmd_check_rate_limit(_: argparse.Namespace) -> None:
 
 
 def _convert_image_to_art(image_path: str, text_len: int, max_chars: int) -> str | None:
-    """Convert image to ASCII art sized to fit within the remaining char budget.
+    """Convert image to ASCII art. Art is exempt from max_chars, so no budget cap.
 
     Returns the art string, or None if conversion fails (caller logs the error
     and continues without art so the post still goes through).
@@ -97,14 +97,8 @@ def _convert_image_to_art(image_path: str, text_len: int, max_chars: int) -> str
         shared.log_error("img2ascii not found; skipping image conversion")
         return None
 
-    # Reserve chars for: text + 2 newlines + art block markers (~20 chars overhead)
-    budget = max_chars - text_len - 20
-    if budget < 50:
-        shared.log_error("not enough char budget for ASCII art after text")
-        return None
-
     try:
-        return image_to_ascii(image_path=image_path, max_chars=budget)
+        return image_to_ascii(image_path=image_path, width=120)
     except Exception as exc:
         shared.log_error(f"img2ascii failed for {image_path!r}: {exc}")
         return None
