@@ -98,7 +98,7 @@ def _convert_image_to_art(image_path: str, text_len: int, max_chars: int) -> str
         return None
 
     try:
-        return image_to_ascii(image_path=image_path)
+        return image_to_ascii(image_path=image_path, width=120)
     except Exception as exc:
         shared.log_error(f"img2ascii failed for {image_path!r}: {exc}")
         return None
